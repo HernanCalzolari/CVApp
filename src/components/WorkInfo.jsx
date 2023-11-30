@@ -1,80 +1,156 @@
-import { useState } from 'react';
+import { useState } from "react";
+import "../css/styles.css";
 
 const WorkInfo = () => {
   // State to store form data
-  const [formData, setFormData] = useState({
-    companyName: '',
-    posTitle: '',
-    responsabilities: '',
-    dates: '',
-  });
+  const [formSets, setFormSets] = useState([
+    {
+      companyname: "",
+      jobtitle: "",
+      responsabilities: "",
+      datefrom: "",
+      dateto: "",
+    },
+  ]);
+  const [isEditing, setIsEditing] = useState(true);
 
   // Handle form input changes
-  const handleInputChange = (e) => {
-    const { companyName, value } = e.target;
-    setFormData({
-      ...formData,
-      [companyName]: value,
-    });
+  const handleInputChange = (index, e) => {
+    const { name, value } = e.target;
+    const updatedFormSets = [...formSets];
+    updatedFormSets[index][name] = value;
+    setFormSets(updatedFormSets);
   };
 
-  // Handle form submission
+  // Function to handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    // You can perform actions with the form data here, e.g., send it to a server
-    console.log('Form data submitted:', formData);
+    setIsEditing(false);
+  };
+
+  // Function to handle edit button click
+  const handleEditClick = () => {
+    setIsEditing(true);
+  };
+
+  const handleAddSet = () => {
+    setFormSets([
+      ...formSets,
+      {
+        companyname: "",
+        jobtitle: "",
+        responsabilities: "",
+        datefrom: "",
+        dateto: "",
+      },
+    ]);
+    setIsEditing(true);
+  };
+
+  const handleRemoveSet = (index) => {
+    const updatedFormSets = [...formSets];
+    updatedFormSets.splice(index, 1);
+    setFormSets(updatedFormSets);
   };
 
   return (
     <div>
-      <h2>Work Experience</h2>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Company Name:
-          <input
-            type="text"
-            name="companyname"
-            value={formData.companyName}
-            onChange={handleInputChange}
-          />
-        </label>
-        <br />
+      <h2 className="inline">Work Experience</h2>
+      {!isEditing && (
+        <button type="button" onClick={handleEditClick}>
+          Edit
+        </button>
+      )}
+      {isEditing &&
+        formSets.map((formSet, index) => (
+          <form key={index} onSubmit={handleSubmit}>
+            <label>
+              Company Name:
+              <input
+                type="text"
+                name="companyname"
+                value={formSet.companyname}
+                onChange={(e) => handleInputChange(index, e)}
+              />
+            </label>
+            <br />
 
-        <label>
-          Job Title:
-          <input
-            type="text"
-            name="jobtitle"
-            value={formData.posTitle}
-            onChange={handleInputChange}
-          />
-        </label>
-        <br />
+            <label>
+              Job Title:
+              <input
+                type="text"
+                name="jobtitle"
+                value={formSet.jobtitle}
+                onChange={(e) => handleInputChange(index, e)}
+              />
+            </label>
+            <br />
 
-        <label>
-          Responsabilities:
-          <input
-            type="text"
-            name="responsabilites"
-            value={formData.responsabilities}
-            onChange={handleInputChange}
-          />
-        </label>
-        <br />
+            <label>
+              Responsibilities:
+              <input
+                type="text"
+                name="responsabilities"
+                value={formSet.responsabilities}
+                onChange={(e) => handleInputChange(index, e)}
+              />
+            </label>
+            <br />
 
-        <label>
-          Dates:
-          <input
-            type="date"
-            name="dates"
-            value={formData.dates}
-            onChange={handleInputChange}
-          />
-        </label>
-        <br />
+            <label>
+              Date From:
+              <input
+                type="date"
+                name="datefrom"
+                value={formSet.datefrom}
+                onChange={(e) => handleInputChange(index, e)}
+              />
+            </label>
+            <br />
 
-        <button type="submit">Submit</button>
-      </form>
+            <label>
+              Date To:
+              <input
+                type="date"
+                name="dateto"
+                value={formSet.dateto}
+                onChange={(e) => handleInputChange(index, e)}
+              />
+            </label>
+            <br />
+
+            {formSets.length > 1 && (
+              <button type="button" onClick={() => handleRemoveSet(index)}>
+                Remove
+              </button>
+            )}
+          </form>
+        ))}
+      {/* Display submitted values */}
+      {!isEditing && (
+        <div>
+          {formSets.map((formSet, index) => (
+            <div key={index}>
+              <p>Company Name: {formSet.companyname}</p>
+              <p>Job Title: {formSet.jobtitle}</p>
+              <p>Responsibilities: {formSet.responsabilities}</p>
+              <p>From: {formSet.datefrom}</p>
+              <p>To: {formSet.dateto}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {!isEditing && (
+        <button type="button" onClick={handleAddSet}>
+          Add Experience
+        </button>
+      )}
+      {isEditing && (
+        <button type="submit" onClick={handleSubmit}>
+          Submit
+        </button>
+      )}
     </div>
   );
 };
